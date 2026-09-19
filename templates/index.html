@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HomicMail - Email Tạm Thời</title>
+    <link rel="stylesheet" href="/static/style.css?v=4">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Animated Background Particles -->
+    <div class="bg-particles" id="particles"></div>
+
+    <!-- Header -->
+    <header class="header">
+        <div class="container header-inner">
+            <a href="/" class="logo">
+                <div class="logo-icon">
+                    <i class="fas fa-envelope-open-text"></i>
+                </div>
+                <span>Homic<strong>Mail</strong></span>
+            </a>
+            <nav class="nav">
+                <a href="/" class="nav-link active">
+                    <i class="fas fa-home"></i>
+                    <span>Trang chủ</span>
+                </a>
+                <a href="/admin" class="nav-link">
+                    <i class="fas fa-shield-alt"></i>
+                    <span>Quản trị</span>
+                </a>
+            </nav>
+            <button class="mobile-menu-btn" id="mobile-menu-btn">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+    </header>
+
+    <!-- Mobile Nav Overlay -->
+    <div class="mobile-nav-overlay" id="mobile-nav">
+        <div class="mobile-nav-content">
+            <button class="mobile-nav-close" id="mobile-nav-close">
+                <i class="fas fa-times"></i>
+            </button>
+            <a href="/" class="mobile-nav-link active">
+                <i class="fas fa-home"></i>
+                <span>Trang chủ</span>
+            </a>
+            <a href="/admin" class="mobile-nav-link">
+                <i class="fas fa-shield-alt"></i>
+                <span>Quản trị</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- Main -->
+    <main class="main">
+        <div class="app-container">
+            <!-- Hero -->
+            <section class="hero">
+                <div class="hero-badge">
+                    <i class="fas fa-bolt"></i>
+                    <span>Email tạm - Tự xóa sau 60 phút</span>
+                </div>
+                <h1>Email Tạm Thời<br><span class="gradient-text">Miễn Phí</span></h1>
+                <p class="subtitle">Nhận email tạm thời ngay lập tức. Không cần đăng ký, bảo mật tuyệt đối.</p>
+                <div class="hero-stats">
+                    <div class="hero-stat">
+                        <span class="stat-number" id="total-sessions">0</span>
+                        <span class="stat-label">Phiên hoạt động</span>
+                    </div>
+                    <div class="hero-stat-divider"></div>
+                    <div class="hero-stat">
+                        <span class="stat-number" id="total-messages">0</span>
+                        <span class="stat-label">Email đã nhận</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Dashboard: 2 Columns -->
+            <div class="dashboard">
+                
+                <!-- ===== LEFT PANEL: CREATE EMAIL ===== -->
+                <div class="panel create-panel" id="create-panel">
+                    <div class="panel-header">
+                        <div class="panel-title">
+                            <i class="fas fa-magic"></i>
+                            <h2>Tạo Email Mới</h2>
+                        </div>
+                        <div class="panel-badge">Tự động</div>
+                    </div>
+                    <div class="panel-body">
+                        <!-- Username Input with Random Generator -->
+                        <div class="form-group">
+                            <label>
+                                <i class="fas fa-user"></i>
+                                Tên người dùng (tùy chọn)
+                            </label>
+                            <div class="input-with-action">
+                                <input type="text" id="username" placeholder="vd: john2024" class="input">
+                                <button class="btn-icon" id="random-btn" title="Tạo ngẫu nhiên">
+                                    <i class="fas fa-dice"></i>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <!-- Domain Display -->
+                        <div class="form-group">
+                            <label>
+                                <i class="fas fa-globe"></i>
+                                Domain
+                            </label>
+                            <div class="domain-display">
+                                <div class="domain-main">
+                                    <i class="fas fa-at"></i>
+                                    <span>@rionfashion.com</span>
+                                </div>
+                                <div class="domain-info">
+                                    <i class="fas fa-clock"></i>
+                                    <span>Tự xóa sau <strong>60 phút</strong></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <input type="hidden" id="domain" value="rionfashion.com">
+                        <input type="hidden" id="provider" value="custom">
+                        
+                        <!-- Generate Button -->
+                        <button id="generate-btn" class="btn btn-primary btn-large">
+                            <span class="btn-content">
+                                <i class="fas fa-bolt"></i>
+                                <span>Tạo Email Ngay</span>
+                            </span>
+                            <span class="btn-loader hidden">
+                                <i class="fas fa-spinner fa-spin"></i>
+                            </span>
+                        </button>
+                        
+                        <!-- Current Email Display -->
+                        <div id="current-email-box" class="current-email-card hidden">
+                            <div class="email-card-header">
+                                <div class="email-status">
+                                    <span class="status-dot active"></span>
+                                    <span>Hoạt động</span>
+                                </div>
+                                <div class="email-timer">
+                                    <i class="fas fa-hourglass-half"></i>
+                                    <span id="expires-in">60:00</span>
+                                </div>
+                            </div>
+                            <div class="email-card-body">
+                                <div class="email-address-large">
+                                    <i class="fas fa-envelope"></i>
+                                    <span id="current-email">-</span>
+                                </div>
+                                <div class="email-card-actions">
+                                    <button class="btn-action" id="copy-btn" data-tooltip="Sao chép">
+                                        <i class="fas fa-copy"></i>
+                                    </button>
+                                    <button class="btn-action" id="refresh-inbox-btn" data-tooltip="Làm mới">
+                                        <i class="fas fa-sync-alt"></i>
+                                    </button>
+                                    <button class="btn-action btn-action-danger" id="delete-btn" data-tooltip="Xóa">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="email-card-footer">
+                                <div class="email-stat">
+                                    <i class="fas fa-envelope"></i>
+                                    <span id="email-count">0</span> thư nhận được
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Credentials Box (Mail.tm) -->
+                        <div id="credentials-box" class="creds-box hidden">
+                            <div class="creds-header">
+                                <i class="fas fa-key"></i>
+                                <span>Thông tin đăng nhập</span>
+                            </div>
+                            <div class="creds-content"></div>
+                        </div>
+                        
+                        <!-- Paste Section -->
+                        <div class="paste-section">
+                            <button class="paste-toggle" id="toggle-paste">
+                                <div class="toggle-content">
+                                    <i class="fas fa-history"></i>
+                                    <span>Đã có email? Dán lại để xem hộp thư</span>
+                                </div>
+                                <i class="fas fa-chevron-down toggle-arrow"></i>
+                            </button>
+                            <div id="paste-form" class="paste-form hidden">
+                                <div class="input-group">
+                                    <label><i class="fas fa-envelope"></i> Email</label>
+                                    <input type="email" id="paste-email" placeholder="email@example.com" class="input">
+                                </div>
+                                <div class="input-group">
+                                    <label><i class="fas fa-lock"></i> Mật khẩu (chỉ Mail.tm)</label>
+                                    <input type="text" id="paste-password" placeholder="Nhập mật khẩu" class="input">
+                                </div>
+                                <button id="paste-btn" class="btn btn-secondary btn-full">
+                                    <i class="fas fa-download"></i>
+                                    <span>Tải Hộp thư</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- ===== RIGHT PANEL: INBOX ===== -->
+                <div class="panel inbox-panel" id="inbox-panel">
+                    <div class="panel-header">
+                        <div class="panel-title">
+                            <i class="fas fa-inbox"></i>
+                            <h2>Hộp Thư Đến</h2>
+                        </div>
+                        <div class="panel-actions">
+                            <span class="badge hidden" id="msg-badge">
+                                <span id="badge-count">0</span>
+                            </span>
+                            <div class="auto-refresh-toggle">
+                                <label class="switch">
+                                    <input type="checkbox" id="auto-refresh" checked>
+                                    <span class="slider"></span>
+                                </label>
+                                <span class="switch-label">Tự động</span>
+                            </div>
+                            <button id="refresh-btn" class="btn btn-icon-only" title="Làm mới">
+                                <i class="fas fa-sync-alt"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="panel-body" style="padding: 0;">
+                        <!-- Inbox List -->
+                        <div id="inbox-list" class="inbox-list">
+                            <div class="empty-state">
+                                <div class="empty-icon">
+                                    <i class="fas fa-inbox"></i>
+                                </div>
+                                <p>Chưa có email</p>
+                                <span>Tạo email mới để bắt đầu nhận thư</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- ===== NO INBOX STATE (hidden when has email) ===== -->
+                <div class="panel hidden" id="no-inbox-panel">
+                    <div class="panel-header">
+                        <div class="panel-title">
+                            <i class="fas fa-inbox"></i>
+                            <h2>Hộp Thư Đến</h2>
+                        </div>
+                    </div>
+                    <div class="panel-body">
+                        <div class="empty-state">
+                            <div class="empty-icon">
+                                <i class="fas fa-envelope-open"></i>
+                            </div>
+                            <p>Chưa có email tạm</p>
+                            <span>Hãy tạo email mới ở panel bên trái</span>
+                        </div>
+                    </div>
+                </div>
+                
+            </div>
+            
+            <!-- ===== MESSAGE VIEW (hidden by default) ===== -->
+            <div class="panel message-section hidden" id="message-section">
+                <div class="panel-header">
+                    <button id="back-btn" class="btn btn-sm btn-secondary">
+                        <i class="fas fa-arrow-left"></i>
+                        <span>Quay lại</span>
+                    </button>
+                    <h2 id="message-subject" class="message-title">Tin nhắn</h2>
+                </div>
+                <div class="panel-body">
+                    <div class="message-meta">
+                        <div class="message-sender">
+                            <div class="sender-avatar">
+                                <i class="fas fa-user"></i>
+                            </div>
+                            <div class="sender-info">
+                                <span class="sender-label">Từ:</span>
+                                <span class="sender-email" id="message-from">-</span>
+                            </div>
+                        </div>
+                        <div class="message-date">
+                            <i class="fas fa-calendar-alt"></i>
+                            <span id="message-date">-</span>
+                        </div>
+                    </div>
+                    <iframe id="message-body" class="message-body"></iframe>
+                    <div class="message-actions">
+                        <button id="copy-body-btn" class="btn btn-secondary">
+                            <i class="fas fa-copy"></i>
+                            <span>Sao chép nội dung</span>
+                        </button>
+                        <button id="raw-btn" class="btn btn-secondary">
+                            <i class="fas fa-code"></i>
+                            <span>Xem mã nguồn</span>
+                        </button>
+                        <button id="reply-btn" class="btn btn-primary hidden">
+                            <i class="fas fa-reply"></i>
+                            <span>Reply</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Features -->
+            <section class="features">
+                <div class="feature-card" data-delay="0">
+                    <div class="feature-icon">
+                        <i class="fas fa-bolt"></i>
+                    </div>
+                    <h3>Tức thì</h3>
+                    <p>Tạo email trong vài giây</p>
+                </div>
+                <div class="feature-card" data-delay="100">
+                    <div class="feature-icon">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <h3>Bảo mật</h3>
+                    <p>Không theo dõi, không lưu log</p>
+                </div>
+                <div class="feature-card" data-delay="200">
+                    <div class="feature-icon">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <h3>Tự xóa</h3>
+                    <p>Tự động xóa sau 60 phút</p>
+                </div>
+                <div class="feature-card" data-delay="300">
+                    <div class="feature-icon">
+                        <i class="fas fa-globe"></i>
+                    </div>
+                    <h3>Domain riêng</h3>
+                    <p>Dùng domain rionfashion.com</p>
+                </div>
+            </section>
+
+            <!-- How it works -->
+            <section class="how-it-works">
+                <h2>Cách hoạt động</h2>
+                <div class="steps">
+                    <div class="step">
+                        <div class="step-number">1</div>
+                        <div class="step-content">
+                            <h4>Tạo email</h4>
+                            <p>Nhấn nút tạo hoặc nhập username tùy chọn</p>
+                        </div>
+                    </div>
+                    <div class="step-arrow">
+                        <i class="fas fa-arrow-right"></i>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">2</div>
+                        <div class="step-content">
+                            <h4>Sử dụng ngay</h4>
+                            <p>Dùng email để đăng ký dịch vụ</p>
+                        </div>
+                    </div>
+                    <div class="step-arrow">
+                        <i class="fas fa-arrow-right"></i>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">3</div>
+                        <div class="step-content">
+                            <h4>Nhận email</h4>
+                            <p>Hộp thư tự động cập nhật</p>
+                        </div>
+                    </div>
+                    <div class="step-arrow">
+                        <i class="fas fa-arrow-right"></i>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">4</div>
+                        <div class="step-content">
+                            <h4>Tự xóa</h4>
+                            <p>Email tự động biến mất sau 60 phút</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <div class="logo">
+                        <div class="logo-icon">
+                            <i class="fas fa-envelope-open-text"></i>
+                        </div>
+                        <span>Homic<strong>Mail</strong></span>
+                    </div>
+                    <p>Dịch vụ email tạm thời tự host</p>
+                </div>
+                <div class="footer-links">
+                    <a href="/"><i class="fas fa-home"></i> Trang chủ</a>
+                    <a href="/admin"><i class="fas fa-cog"></i> Quản trị</a>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 HomicMail - Dịch vụ Email Tạm Thời Tự Host</p>
+                <p class="small">Sử dụng GuerrillaMail API. Không liên kết với homicmail.com.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Toast -->
+    <div id="toast" class="toast">
+        <i class="toast-icon fas fa-check-circle"></i>
+        <span class="toast-message"></span>
+    </div>
+
+    <!-- Confirmation Modal -->
+    <div class="modal-overlay hidden" id="modal-overlay">
+        <div class="modal">
+            <div class="modal-header">
+                <i class="fas fa-exclamation-triangle modal-icon"></i>
+                <h3 id="modal-title">Xác nhận</h3>
+            </div>
+            <div class="modal-body">
+                <p id="modal-message">Bạn có chắc chắn?</p>
+            </div>
+            <div class="modal-actions">
+                <button class="btn btn-secondary" id="modal-cancel">Hủy</button>
+                <button class="btn btn-danger" id="modal-confirm">Xác nhận</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="/static/app.js?v=2"></script>
+</body>
+</html>

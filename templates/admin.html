@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quản trị - HomicMail</title>
+    <link rel="stylesheet" href="/static/style.css?v=5">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Animated Background Particles -->
+    <div class="bg-particles" id="particles">
+        <div class="orb-1"></div>
+        <div class="orb-2"></div>
+        <div class="orb-3"></div>
+    </div>
+    <div class="bg-grid"></div>
+
+    <!-- Header -->
+    <header class="header">
+        <div class="container header-inner">
+            <a href="/" class="logo">
+                <div class="logo-icon">
+                    <i class="fas fa-envelope-open-text"></i>
+                </div>
+                <span>Homic<strong>Mail</strong></span>
+            </a>
+            <nav class="nav">
+                <a href="/" class="nav-link">
+                    <i class="fas fa-home"></i>
+                    <span>Trang chủ</span>
+                </a>
+                <a href="/admin" class="nav-link active">
+                    <i class="fas fa-shield-alt"></i>
+                    <span>Quản trị</span>
+                </a>
+            </nav>
+            <button class="mobile-menu-btn" id="mobile-menu-btn">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+    </header>
+
+    <!-- Mobile Nav Overlay -->
+    <div class="mobile-nav-overlay" id="mobile-nav">
+        <div class="mobile-nav-content">
+            <button class="mobile-nav-close" id="mobile-nav-close">
+                <i class="fas fa-times"></i>
+            </button>
+            <a href="/" class="mobile-nav-link">
+                <i class="fas fa-home"></i>
+                <span>Trang chủ</span>
+            </a>
+            <a href="/admin" class="mobile-nav-link active">
+                <i class="fas fa-shield-alt"></i>
+                <span>Quản trị</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- Main -->
+    <main class="main">
+        <div class="container">
+            <!-- Page Header -->
+            <div class="page-header">
+                <div class="page-header-content">
+                    <h1>
+                        <i class="fas fa-shield-alt"></i>
+                        Bảng Quản Trị
+                    </h1>
+                    <p>Theo dõi và quản lý các phiên hoạt động</p>
+                </div>
+                <div class="page-header-actions">
+                    <button class="btn btn-secondary" id="refresh-stats">
+                        <i class="fas fa-sync-alt"></i>
+                        <span>Làm mới</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Stats Cards -->
+            <div class="stats-grid">
+                <div class="stat-card stat-card-primary">
+                    <div class="stat-card-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <div class="stat-card-content">
+                        <div class="stat-value" id="stat-active-sessions">{{ active_sessions }}</div>
+                        <div class="stat-label">Phiên hoạt động</div>
+                    </div>
+                    <div class="stat-card-indicator">
+                        <span class="indicator-dot active"></span>
+                    </div>
+                </div>
+                <div class="stat-card stat-card-success">
+                    <div class="stat-card-icon">
+                        <i class="fas fa-envelope-open-text"></i>
+                    </div>
+                    <div class="stat-card-content">
+                        <div class="stat-value" id="stat-total-messages">{{ total_messages }}</div>
+                        <div class="stat-label">Tổng tin nhắn</div>
+                    </div>
+                    <div class="stat-card-trend up">
+                        <i class="fas fa-arrow-up"></i>
+                    </div>
+                </div>
+                <div class="stat-card stat-card-accent">
+                    <div class="stat-card-icon">
+                        <i class="fas fa-globe"></i>
+                    </div>
+                    <div class="stat-card-content">
+                        <div class="stat-value">1</div>
+                        <div class="stat-label">Domain khả dụng</div>
+                    </div>
+                    <div class="stat-card-badge">rionfashion.com</div>
+                </div>
+            </div>
+
+            <!-- Sessions Table -->
+            <div class="card sessions-card">
+                <div class="card-header">
+                    <div class="card-title">
+                        <i class="fas fa-list"></i>
+                        <h2>Các phiên gần đây</h2>
+                    </div>
+                    <div class="card-filters">
+                        <div class="search-box">
+                            <i class="fas fa-search"></i>
+                            <input type="text" id="search-sessions" placeholder="Tìm kiếm email..." class="input">
+                        </div>
+                        <div class="filter-dropdown">
+                            <select id="filter-status" class="input">
+                                <option value="all">Tất cả</option>
+                                <option value="active">Hoạt động</option>
+                                <option value="inactive">Đã đóng</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body" style="padding: 0;">
+                    <div class="table-responsive">
+                        <table class="data-table" id="sessions-table">
+                            <thead>
+                                <tr>
+                                    <th class="sortable" data-sort="id">
+                                        <span>ID Phiên</span>
+                                        <i class="fas fa-sort"></i>
+                                    </th>
+                                    <th class="sortable" data-sort="email">
+                                        <span>Email</span>
+                                        <i class="fas fa-sort"></i>
+                                    </th>
+                                    <th class="sortable" data-sort="domain">
+                                        <span>Domain</span>
+                                        <i class="fas fa-sort"></i>
+                                    </th>
+                                    <th class="sortable" data-sort="created">
+                                        <span>Ngày tạo</span>
+                                        <i class="fas fa-sort"></i>
+                                    </th>
+                                    <th class="sortable" data-sort="status">
+                                        <span>Trạng thái</span>
+                                        <i class="fas fa-sort"></i>
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody id="sessions-tbody">
+                                {% for s in sessions %}
+                                <tr class="session-row" data-status="{{ 'active' if s[6] else 'inactive' }}">
+                                    <td>
+                                        <code class="session-id">{{ s[0][:16] }}...</code>
+                                        <button class="btn-copy-session" data-id="{{ s[0] }}" title="Sao chép ID">
+                                            <i class="fas fa-copy"></i>
+                                        </button>
+                                    </td>
+                                    <td class="email-cell">
+                                        <div class="email-display">
+                                            <i class="fas fa-envelope"></i>
+                                            <span>{{ s[1] }}</span>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <span class="domain-tag">{{ s[2] }}</span>
+                                    </td>
+
+                                    <td>
+                                        <span class="date-display" title="{{ s[4] }}">
+                                            {{ s[4] or '-' }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        {% if s[6] %}
+                                        <span class="status-badge status-active">
+                                            <span class="status-dot"></span>
+                                            Hoạt động
+                                        </span>
+                                        {% else %}
+                                        <span class="status-badge status-inactive">
+                                            <span class="status-dot"></span>
+                                            Đã đóng
+                                        </span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% else %}
+                                <tr class="empty-row">
+                                    <td colspan="6">
+                                        <div class="empty-state">
+                                            <i class="fas fa-inbox"></i>
+                                            <p>Chưa có phiên nào</p>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <div class="table-info">
+                        <span id="visible-count">{{ sessions|length }}</span> phiên được hiển thị
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="quick-actions">
+                <h3><i class="fas fa-bolt"></i> Thao tác nhanh</h3>
+                <div class="actions-grid">
+                    <a href="/" class="action-card">
+                        <i class="fas fa-plus-circle"></i>
+                        <span>Tạo email mới</span>
+                    </a>
+                    <button class="action-card" id="export-data">
+                        <i class="fas fa-download"></i>
+                        <span>Xuất dữ liệu</span>
+                    </button>
+                    <button class="action-card" id="clear-expired">
+                        <i class="fas fa-trash-alt"></i>
+                        <span>Xóa hết đã hết hạn</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <div class="logo">
+                        <div class="logo-icon">
+                            <i class="fas fa-envelope-open-text"></i>
+                        </div>
+                        <span>Homic<strong>Mail</strong></span>
+                    </div>
+                    <p>Dịch vụ email tạm thời tự host</p>
+                </div>
+                <div class="footer-links">
+                    <a href="/"><i class="fas fa-home"></i> Trang chủ</a>
+                    <a href="/admin"><i class="fas fa-cog"></i> Quản trị</a>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 HomicMail - Dịch vụ Email Tạm Thời Tự Host</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Toast -->
+    <div id="toast" class="toast">
+        <i class="toast-icon fas fa-check-circle"></i>
+        <span class="toast-message"></span>
+    </div>
+
+    <script src="/static/app.js?v=2"></script>
+    <script>
+        // Admin page specific scripts
+        document.addEventListener('DOMContentLoaded', function() {
+            // Copy session ID
+            document.querySelectorAll('.btn-copy-session').forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    const id = this.dataset.id;
+                    navigator.clipboard.writeText(id).then(() => {
+                        showToast('Đã sao chép ID phiên');
+                    });
+                });
+            });
+
+            // Search functionality
+            const searchInput = document.getElementById('search-sessions');
+            const filterSelect = document.getElementById('filter-status');
+            const rows = document.querySelectorAll('.session-row');
+            const visibleCount = document.getElementById('visible-count');
+
+            function filterSessions() {
+                const searchTerm = searchInput.value.toLowerCase();
+                const filterValue = filterSelect.value;
+                let count = 0;
+
+                rows.forEach(row => {
+                    const email = row.querySelector('.email-cell span')?.textContent.toLowerCase() || '';
+                    const status = row.dataset.status;
+                    const matchesSearch = email.includes(searchTerm);
+                    const matchesFilter = filterValue === 'all' || status === filterValue;
+
+                    if (matchesSearch && matchesFilter) {
+                        row.style.display = '';
+                        count++;
+                    } else {
+                        row.style.display = 'none';
+                    }
+                });
+
+                visibleCount.textContent = count;
+            }
+
+            searchInput?.addEventListener('input', filterSessions);
+            filterSelect?.addEventListener('change', filterSessions);
+
+            // Sort functionality
+            document.querySelectorAll('.sortable').forEach(th => {
+                th.addEventListener('click', function() {
+                    const sortKey = this.dataset.sort;
+                    const table = document.getElementById('sessions-table');
+                    const tbody = table.querySelector('tbody');
+                    const rows = Array.from(tbody.querySelectorAll('tr:not(.empty-row)'));
+                    const isAsc = table.dataset.sortDir !== sortKey;
+
+                    rows.sort((a, b) => {
+                        let aVal, bVal;
+                        switch(sortKey) {
+                            case 'id':
+                                aVal = a.querySelector('.session-id')?.textContent || '';
+                                bVal = b.querySelector('.session-id')?.textContent || '';
+                                break;
+                            case 'email':
+                                aVal = a.querySelector('.email-cell span')?.textContent || '';
+                                bVal = b.querySelector('.email-cell span')?.textContent || '';
+                                break;
+                            case 'domain':
+                                aVal = a.querySelector('.domain-tag')?.textContent || '';
+                                bVal = b.querySelector('.domain-tag')?.textContent || '';
+                                break;
+                            case 'provider':
+                                aVal = a.querySelector('.provider-tag')?.textContent || '';
+                                bVal = b.querySelector('.provider-tag')?.textContent || '';
+                                break;
+                            case 'status':
+                                aVal = a.dataset.status || '';
+                                bVal = b.dataset.status || '';
+                                break;
+                            default:
+                                return 0;
+                        }
+                        return isAsc ? aVal.localeCompare(bVal) : bVal.localeCompare(aVal);
+                    });
+
+                    table.dataset.sortDir = isAsc ? sortKey : '';
+                    rows.forEach(row => tbody.insertBefore(row, tbody.querySelector('.empty-row') || null));
+                });
+            });
+
+            // Export data
+            document.getElementById('export-data')?.addEventListener('click', function() {
+                const data = {{ sessions|tojson }};
+                const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'smvmail-sessions-' + new Date().toISOString().split('T')[0] + '.json';
+                a.click();
+                URL.revokeObjectURL(url);
+                showToast('Đã xuất dữ liệu');
+            });
+        });
+
+        // Mobile menu
+        document.getElementById('mobile-menu-btn')?.addEventListener('click', function() {
+            document.getElementById('mobile-nav')?.classList.add('active');
+        });
+        document.getElementById('mobile-nav-close')?.addEventListener('click', function() {
+            document.getElementById('mobile-nav')?.classList.remove('active');
+        });
+    </script>
+</body>
+</html>
